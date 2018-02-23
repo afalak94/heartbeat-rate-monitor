@@ -1,0 +1,92 @@
+<style> /* set the CSS */
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+</style>
+<body>
+
+<!-- load the d3.js library -->     
+<script type="text/javascript" src="d3.min.js"></script>
+<script>
+
+// set the dimensions and margins of the graph
+var margin1 = {top: 20, right: 20, bottom: 30, left: 50},
+    width1 = 576 - margin1.left - margin1.right,
+    height1 = 300 - margin1.top - margin1.bottom;
+
+// parse the date / time
+var parseTime1 = d3v4.timeParse("%Y-%b-%a %H:%M:%S");
+
+// set the ranges
+var x1 = d3v4.scaleTime().range([0, width1]);
+var y1 = d3v4.scaleLinear().range([height1, 0]);
+
+// define the line
+var valueline1 = d3v4.line()
+    .x(function(d) { return x1(d.time); })
+    .y(function(d) { return y1(d.heart_rate); });
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3v4.select("#graph1").append("svg")
+    .attr("width", width1 + margin1.left + margin1.right)
+    .attr("height", height1 + margin1.top + margin1.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin1.left + "," + margin1.top + ")");
+
+// Get the data
+d3v4.csv("data1.csv", function(error, data1) {
+  if (error) throw error;
+
+  // format the data
+  data1.forEach(function(d) {
+      d.heart_rate = +d.heart_rate;
+      d.time = new Date(d.time);
+  });
+
+  // Scale the range of the data
+  x1.domain(d3v4.extent(data1, function(d) { return d.time; }));
+  y1.domain([0, d3v4.max(data1, function(d) { return d.heart_rate; })]);
+
+  // Add the valueline path.
+  svg.append("path")
+      .data([data1])
+      .attr("class", "line")
+      .attr("d", valueline1);
+
+  // Add the X Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(d3v4.axisBottom(x1)).selectAll("text").remove();
+
+
+  // Add the Y Axis
+  svg.append("g")
+      .call(d3v4.axisLeft(y1));
+
+  //x label
+  svg.append("text")             
+      .attr("transform",
+            "translate(" + (width1/2) + " ," + 
+                           (height1 + margin1.top) + ")")
+      .style("text-anchor", "middle")
+      .text("Time");
+
+  // text label for the y axis
+  svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin1.left + 10)
+      .attr("x",0 - (height1 / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Heartbeat Rate");  
+
+});
+
+</script>
