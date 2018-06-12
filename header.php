@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php 
+if(session_id() == '' || !isset($_SESSION)) {
+    // session isn't started
+    session_start();
+} ?>
 <!DOCTYPE html>
 <html>
 <head>

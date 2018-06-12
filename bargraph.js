@@ -1,5 +1,5 @@
 <script>
-
+//source: http://d3-generator.com/
 var valueLabelWidth = 40; // space reserved for value labels (right)
 var barHeight = 20; // height of one bar
 var barLabelWidth = 30; // space reserved for bar labels
@@ -92,7 +92,7 @@ chart.append("text")
       .attr("x",0 - 120)
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Trainings"); 
+      .text(""); 
 });
 
 </script>

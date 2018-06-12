@@ -1,10 +1,12 @@
 <?php
     include 'connect.php';
- 
+
+    $user = $_SESSION['user_name'];
+    $user = mysql_real_escape_string($user);
     //$myquery = "SELECT  `heart_rate`, `time` FROM  `podaci`";
 
     $myquery2 = "SELECT `heart_rate`, `time` FROM (
-            SELECT `heart_rate`, `time` FROM `podaci` ORDER BY time DESC LIMIT 100) sub
+            SELECT `heart_rate`, `time` FROM `podaci` WHERE user_name='$user' ORDER BY time DESC LIMIT 100) sub
         ORDER BY time ASC"; 
 
     $result = mysqli_query($conn, $myquery2);
@@ -26,14 +28,8 @@
     fwrite($fp, "heart_rate,time\n");
 
     foreach ($array as $array) {
-        fputcsv($fp, $array);
+        @fputcsv($fp, $array);
     }
 
     fclose($fp);
-
-
-    //getting mean heartrate and time
-
-
-
 ?>

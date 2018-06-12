@@ -1,6 +1,6 @@
 <?php
 	include("connect.php");
-	//include("getpage.php"); 
+	#include("getpage.php"); 
 	include_once 'header.php';
 
   //SQL queries
@@ -11,11 +11,22 @@
 
   $trainings = mysqli_query($conn, "SELECT * FROM trainings ORDER BY id DESC LIMIT 1");
 	$trainings_row = mysqli_fetch_array($trainings, MYSQLI_ASSOC);
+
+  if (isset($_SESSION['user_name'])) {
+    // session is started
+    $average = $_SESSION['average'];
+  }
+  
 ?>
 
 
 <div class="container" style="padding-top: 50px;">
 	<?php if (isset($_SESSION['user_name'])) {
+      echo '<form action="getpage.php" method="get">
+            <div class="wrapper"><button class="button1" type="submit">Pull Your Data</button></div>
+            </form>';
+
+
     	echo '<h1 style="text-align: center; margin-top: 20px;">' . $_SESSION['user_name'] . '</h1>';
 	}
     else {
@@ -35,13 +46,37 @@
     width: 250px;
     height: 40px;
   }
+  .button1 {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 25px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+
+  .button1:hover {
+      background-color: green;
+  }
+  .wrapper {
+      text-align: center;
+  }
 </style>
 
 <!-- LINEGRAPH -->
   <div id="graph1" class="container" style="float: left; width: 650px; height: 270px;">
   	<div class="row align-items-start">
   		<div class="col-sm">
-        <?php include 'getdata1.php'; include 'linegraph2.html'; ?>
+        <?php 
+        if (isset($_SESSION['user_name'])) {
+            include 'getdata1.php'; include 'linegraph2.html';
+          }
+          else {
+            echo '<div><h2>Log in to check your heartbeat stats!</h2></div>';
+          }
+         ?>
     	</div>
     </div>
   </div>
@@ -102,7 +137,13 @@
   <div id="graph2" class="container" style="float: left; width: 650px; margin-top: 100px;" >
   	<div class="row align-items-start">
   		<div class="col-sm">
-  			<?php include 'getdata2.php'; include 'bargraph.js'; ?>
+  			<?php 
+          if (isset($_SESSION['user_name'])) {
+            include 'getdata2.php'; include 'bargraph.js';
+          }
+          else {
+            echo '<div><h2>Log in to check your training stats!</h2></div>';
+          } ?>
     	</div>
     </div>
   </div>
@@ -113,7 +154,13 @@
       <div class="col-sm">
         <form id="hbr">
         <label style="font-size: 24px; color: blue; margin-left: 60px;">Mean Heartbeat from last exercise:</label>
-        <input type="text" name="HB" id="HB" value="<?php echo round($average); ?>" style="height: 40px; width: 100px; font-size: 24px;">
+        <input type="text" name="HB" id="HB" value="<?php 
+          if (isset($_SESSION['user_name'])) {  
+            echo round($average);
+          }
+          else {
+            echo 'N/A';
+          }?>" style="height: 40px; width: 100px; font-size: 24px;">
         </form>
         <?php include 'heartbeat.html'; ?>
       </div>
